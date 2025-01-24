@@ -3,7 +3,18 @@ const urlMap: {[key: string]: string} = {
 }
 
 Bun.serve({
-  fetch(req) {
+  async fetch(req) {
+    if (req.method === "POST") {
+      const url = new URL(req.url);
+      if (url.pathname === "/shorten") {
+        const data = await req.json();
+        const hex = Bun.hash(data.url).toString(16).slice(0,8);
+        const body = JSON.stringify({origUrl: data.url, shortUrl: `${url.hostname}/${hex}`});
+        return new Response(body, {status: 201});
+      } else {
+        return new Response("Wrong request", {status: 400});
+      }
+    }
     const urlShort = new URL(req.url);
     const key = urlShort.pathname.slice(1);
     const urlLong = urlMap[key];
