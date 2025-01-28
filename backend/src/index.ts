@@ -39,7 +39,16 @@ async function GET(req: Request) {
 async function POST(req: Request) {
   const url = new URL(req.url);
   if (url.pathname === "/shorten") {
-    const data = await req.json();
+    let data;
+    try {
+      data = await req.json();
+    } catch (error) {
+      return new Response("Invalid JSON input", {status: 400})
+    }
+
+    if (!data.url) {
+      return new Response("Missing 'url' in request", {status: 400})
+    }
     const hex = Bun.hash(data.url).toString(16).slice(0,8);
     const body = JSON.stringify({origUrl: data.url, shortUrl: `${url.hostname}/${hex}`});
     return new Response(body, {status: 201});
