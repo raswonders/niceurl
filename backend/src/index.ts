@@ -12,17 +12,21 @@ Bun.serve({
         const body = JSON.stringify({origUrl: data.url, shortUrl: `${url.hostname}/${hex}`});
         return new Response(body, {status: 201});
       } else {
-        return new Response("Wrong request", {status: 400});
+        return new Response("400 Bad request", {status: 400});
       }
     }
-    const urlShort = new URL(req.url);
-    const key = urlShort.pathname.slice(1);
-    const urlLong = urlMap[key];
 
-    if (urlLong) {
-      return Response.redirect(urlLong);
-    } else {
-      return new Response("404 Not Found", {status: 404});
-    }
+    if (req.method === "GET") {
+      const urlShort = new URL(req.url);
+      const key = urlShort.pathname.slice(1);
+      const urlLong = urlMap[key];
+      if (urlLong) {
+        return Response.redirect(urlLong);
+      } else {
+        return new Response("404 Not Found", {status: 404});
+      }
+    } 
+
+    return new Response("400 Bad request", {status: 400});
   }
 })
