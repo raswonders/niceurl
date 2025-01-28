@@ -6,27 +6,12 @@ Bun.serve({
   async fetch(req) {
     console.log(req);
     let res: Response;
-    
+
     try {
       if (req.method === "GET") {
-        const urlShort = new URL(req.url);
-        const key = urlShort.pathname.slice(1);
-        const urlLong = urlMap[key];
-        if (urlLong) {
-          res = Response.redirect(urlLong);
-        } else {
-          res = new Response("404 Not Found", {status: 404});
-        }
+        res = await GET(req);
       } else if (req.method === "POST") {
-        const url = new URL(req.url);
-        if (url.pathname === "/shorten") {
-          const data = await req.json();
-          const hex = Bun.hash(data.url).toString(16).slice(0,8);
-          const body = JSON.stringify({origUrl: data.url, shortUrl: `${url.hostname}/${hex}`});
-          res = new Response(body, {status: 201});
-        } else {
-          res = new Response("400 Bad request", {status: 400});
-        }
+        res = await POST(req);
       } else {
         res = new Response("400 Bad request", {status: 400});
       }
@@ -39,3 +24,26 @@ Bun.serve({
     return res;
   }
 })
+
+async function GET(req: Request) {
+  const urlShort = new URL(req.url);
+  const key = urlShort.pathname.slice(1);
+  const urlLong = urlMap[key];
+  if (urlLong) {
+    return Response.redirect(urlLong);
+  } else {
+    return new Response("404 Not Found", {status: 404});
+  }
+}
+
+async function POST(req: Request) {
+  const url = new URL(req.url);
+  if (url.pathname === "/shorten") {
+    const data = await req.json();
+    const hex = Bun.hash(data.url).toString(16).slice(0,8);
+    const body = JSON.stringify({origUrl: data.url, shortUrl: `${url.hostname}/${hex}`});
+    return new Response(body, {status: 201});
+  } else {
+    return new Response("400 Bad request", {status: 400});
+  }
+}
