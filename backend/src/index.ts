@@ -6,28 +6,33 @@ Bun.serve({
   async fetch(req) {
     console.log(req);
     let res: Response;
-
-    if (req.method === "GET") {
-      const urlShort = new URL(req.url);
-      const key = urlShort.pathname.slice(1);
-      const urlLong = urlMap[key];
-      if (urlLong) {
-        res = Response.redirect(urlLong);
-      } else {
-        res = new Response("404 Not Found", {status: 404});
-      }
-    } else if (req.method === "POST") {
-      const url = new URL(req.url);
-      if (url.pathname === "/shorten") {
-        const data = await req.json();
-        const hex = Bun.hash(data.url).toString(16).slice(0,8);
-        const body = JSON.stringify({origUrl: data.url, shortUrl: `${url.hostname}/${hex}`});
-        res = new Response(body, {status: 201});
+    
+    try {
+      if (req.method === "GET") {
+        const urlShort = new URL(req.url);
+        const key = urlShort.pathname.slice(1);
+        const urlLong = urlMap[key];
+        if (urlLong) {
+          res = Response.redirect(urlLong);
+        } else {
+          res = new Response("404 Not Found", {status: 404});
+        }
+      } else if (req.method === "POST") {
+        const url = new URL(req.url);
+        if (url.pathname === "/shorten") {
+          const data = await req.json();
+          const hex = Bun.hash(data.url).toString(16).slice(0,8);
+          const body = JSON.stringify({origUrl: data.url, shortUrl: `${url.hostname}/${hex}`});
+          res = new Response(body, {status: 201});
+        } else {
+          res = new Response("400 Bad request", {status: 400});
+        }
       } else {
         res = new Response("400 Bad request", {status: 400});
       }
-    } else {
-      res = new Response("400 Bad request", {status: 400});
+    } catch (error) {
+      console.log("Error has occurred:\n", error)
+      res = new Response("500 Internal server error", {status: 500})
     }
 
     console.log(res);
