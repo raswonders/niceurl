@@ -12,7 +12,16 @@ const createTableQuery = `
 db.exec(createTableQuery);
 
 const api = {
-  insert() {},
+  insert(hash: string, url: string) {
+    try {
+      const result = db
+        .query(`INSERT INTO urls(hash, url) VALUES($hash, $url);`)
+        .run({ hash, url });
+      return result.changes;
+    } catch (error) {
+      console.log("Error during insert \n", error);
+    }
+  },
 };
 
 export default api;
