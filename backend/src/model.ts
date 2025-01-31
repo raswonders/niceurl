@@ -1,5 +1,10 @@
 import { Database } from "bun:sqlite";
 
+type Row = {
+  hash: string;
+  url: string;
+};
+
 const db = new Database("../mydb.sqlite", { create: true, strict: true });
 
 const createTableQuery = `
@@ -20,6 +25,17 @@ const api = {
       return result.changes;
     } catch (error) {
       console.log("Error during insert \n", error);
+    }
+  },
+
+  get(hash: string) {
+    try {
+      const result = db
+        .query(`SELECT url FROM urls WHERE hash = $hash;`)
+        .get({ hash }) as Row | null;
+      return result ? result.url : null;
+    } catch (error) {
+      console.log("Error during select \n", error);
     }
   },
 };

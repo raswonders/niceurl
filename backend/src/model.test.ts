@@ -26,3 +26,21 @@ test("insert a url", () => {
     db.query(`DELETE FROM urls WHERE id == $id;`).run({ $id: result });
   }
 });
+
+test("get url for hash", () => {
+  // setup
+  const hash = "TESTTEST";
+  const url = "http://example.com";
+  model.insert(hash, url);
+
+  const result = model.get(hash);
+  expect(result).toBe(url);
+
+  // clean-up
+  db.query(`DELETE FROM urls WHERE hash = $hash;`).run({ $hash: hash });
+});
+
+test("get null for nonexistent hash", () => {
+  const result = model.get("nonexistent");
+  expect(result).toBe(null);
+});
