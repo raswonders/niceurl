@@ -1,11 +1,13 @@
 import { Database } from "bun:sqlite";
+import path from "path";
 
 type Row = {
   hash: string;
   url: string;
 };
 
-const db = new Database("../mydb.sqlite", { create: true, strict: true });
+const dbPath = path.join(import.meta.dir, "../mydb.sqlite");
+const db = new Database(dbPath, { strict: true });
 
 const createTableQuery = `
   CREATE TABLE IF NOT EXISTS urls (
