@@ -54,3 +54,17 @@ test("delete a hash", () => {
   const result = model.delete(hash);
   expect(result).toBeGreaterThan(0);
 });
+
+test("update url for a hash", () => {
+  // setup
+  const hash = "TESTTEST";
+  const url = "http://example.com";
+  const url2 = "http://example2.com";
+  model.insert(hash, url);
+
+  expect(model.update(hash, url2)).toBeGreaterThan(0);
+  expect(model.get(hash)).toBe(url2);
+
+  // clean-up
+  db.query(`DELETE FROM urls WHERE hash = $hash;`).run({ $hash: hash });
+});

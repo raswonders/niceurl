@@ -49,6 +49,17 @@ const api = {
       console.log("Error during delete \n", error);
     }
   },
+
+  update(hash: string, url: string) {
+    try {
+      const result = db
+        .query(`UPDATE urls SET url = $url WHERE hash = $hash;`)
+        .run({ hash, url });
+      return result.changes;
+    } catch (error) {
+      console.log("Error during update\n", error);
+    }
+  },
 };
 
 export default api;
