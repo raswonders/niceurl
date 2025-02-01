@@ -27,6 +27,7 @@ const api = {
       return result.changes;
     } catch (error) {
       console.log("Error during insert \n", error);
+      return -1;
     }
   },
 
@@ -38,6 +39,7 @@ const api = {
       return result ? result.url : null;
     } catch (error) {
       console.log("Error during select \n", error);
+      return -1;
     }
   },
 
@@ -49,6 +51,7 @@ const api = {
       return result.changes;
     } catch (error) {
       console.log("Error during delete \n", error);
+      return -1;
     }
   },
 
@@ -60,6 +63,7 @@ const api = {
       return result.changes;
     } catch (error) {
       console.log("Error during update\n", error);
+      return -1;
     }
   },
 };
