@@ -38,6 +38,17 @@ const api = {
       console.log("Error during select \n", error);
     }
   },
+
+  delete(hash: string) {
+    try {
+      const result = db
+        .query(`DELETE FROM urls WHERE hash = $hash;`)
+        .run({ hash });
+      return result.changes;
+    } catch (error) {
+      console.log("Error during delete \n", error);
+    }
+  },
 };
 
 export default api;

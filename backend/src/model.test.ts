@@ -44,3 +44,13 @@ test("get null for nonexistent hash", () => {
   const result = model.get("nonexistent");
   expect(result).toBe(null);
 });
+
+test("delete a hash", () => {
+  // setup
+  const hash = "TESTTEST";
+  const url = "http://example.com";
+  model.insert(hash, url);
+
+  const result = model.delete(hash);
+  expect(result).toBeGreaterThan(0);
+});
