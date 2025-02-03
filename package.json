@@ -1,15 +1,14 @@
 {
   "name": "niceurl",
   "module": "index.ts",
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
+  "devDependencies": {},
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "type": "module",
-  "workspaces": ["frontend", "backend"],
-  "scripts": {
-    "dev": "bun --cwd frontend dev"
-  }
+  "workspaces": [
+    "frontend/",
+    "backend/"
+  ],
+  "scripts": {}
 }
