@@ -1,7 +1,12 @@
+import { ShortenCard } from "./components/shorten-card";
+
 function App() {
+
   return (
-    <h1 className="text-3xl">Hello world</h1>
-  )
+    <main className="flex justify-center">
+      <ShortenCard />
+    </main>
+  );
 }
 
-export default App
+export default App;
