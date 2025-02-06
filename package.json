@@ -10,5 +10,9 @@
     "frontend/",
     "backend/"
   ],
-  "scripts": {}
+  "scripts": {
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "dev": "pnpm run dev:frontend & pnpm run dev:backend"
+  }
 }
