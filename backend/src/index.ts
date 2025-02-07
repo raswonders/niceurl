@@ -10,6 +10,8 @@ Bun.serve({
         res = await GET(req);
       } else if (req.method === "POST") {
         res = await POST(req);
+      } else if (req.method === "OPTIONS") {
+        res = await OPTIONS(req);
       } else {
         res = new Response("400 Bad request", { status: 400 });
       }
@@ -22,6 +24,17 @@ Bun.serve({
     return res;
   },
 });
+
+export async function OPTIONS(req: Request) {
+  return new Response(null, {
+    status: 204, 
+    headers: {
+          "Access-Control-Allow-Origin": "http://localhost:5173",
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+    },
+  })
+}
 
 export async function GET(req: Request) {
   const urlShort = new URL(req.url);
