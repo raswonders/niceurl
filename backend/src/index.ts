@@ -27,13 +27,13 @@ Bun.serve({
 
 export async function OPTIONS(req: Request) {
   return new Response(null, {
-    status: 204, 
+    status: 204,
     headers: {
-          "Access-Control-Allow-Origin": "http://localhost:5173",
-          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Origin": "http://localhost:5173",
+      "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
     },
-  })
+  });
 }
 
 export async function GET(req: Request) {
@@ -65,18 +65,39 @@ export async function POST(req: Request) {
       return new Response("Missing 'url' in request", { status: 400 });
     }
 
-    const hex = Bun.hash(data.url).toString(16).slice(0, 8);
-    const result = db.insert(hex, data.url);
-    if (result === -1) {
+    let retries = 0;
+    let hash;
+    let isHashUnique = false;
+    while(!isHashUnique || retries < 5) {
+      const salt = Date.now();
+      hash = Bun.hash(data.url + salt).toString(16).slice(0, 8);
+      let result = db.get(hash);
+      if (result === null) {
+        isHashUnique = true;
+        break;
+      }
+      retries++;
+    } 
+
+    if (hash && isHashUnique) {
+      let result = db.insert(hash, data.url);
+      if (result === -1) {
+        console.log("1")
+        return new Response("500 Internal server error", { status: 500 });
+      }
+    } else {
+      console.log({hash, isHashUnique})
       return new Response("500 Internal server error", { status: 500 });
     }
 
-    const body = JSON.stringify({
-      origUrl: data.url,
-      hostname: url.hostname,
-      hash: hex, 
-    });
-    return new Response(body, { status: 201, headers: { "Content-Type": "application/json" } });
+    return new Response(
+      JSON.stringify({
+        origUrl: data.url,
+        hostname: url.hostname,
+        hash,
+      }),
+      { status: 201, headers: { "Content-Type": "application/json" } }
+    );
   } else {
     return new Response("400 Bad request", { status: 400 });
   }
