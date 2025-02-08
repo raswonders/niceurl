@@ -5,6 +5,9 @@
   "devDependencies": {
     "@types/bun": "^1.2.2"
   },
+  "scripts": {
+    "dev": "bun --watch src/index.ts"
+  },
   "peerDependencies": {
     "typescript": "^5.0.0"
   }

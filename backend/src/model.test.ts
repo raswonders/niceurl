@@ -1,8 +1,9 @@
 import { test, expect, describe, beforeEach } from "bun:test";
 import { Database } from "bun:sqlite";
 import model from "./model";
+import path from "path";
 
-const dbPath = "../mydb.sqlite";
+const dbPath = path.join(path.resolve(__dirname), "../mydb.sqlite");
 const db = new Database(dbPath);
 
 test("database exists", async () => {
